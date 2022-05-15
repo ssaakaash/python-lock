@@ -1,2 +1,4 @@
-# project-2022
-NCFE Class 12 Python project
+# NCFE Class 12 Project 2022
+
+Name of project - undecided
+Synopsis, libraries, etc. - Undecided
