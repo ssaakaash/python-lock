@@ -4,7 +4,7 @@ from datetime import date
 
 
 # LOGO_PATH = r'C:\Users\Vipra\AppData\Local\Programs\Python\Python39\12th project\ncfe_logo.gif'
-LOGO_PATH = '/Users/aakaash/PycharmProjects/project-2022/logo.gif'
+LOGO_PATH = './logo.gif'
 
 
 class Election:
