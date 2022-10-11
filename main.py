@@ -1,45 +1,39 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 from tkinter import *
 from tkinter import ttk
 from datetime import date
 
+
+# LOGO_PATH = r'C:\Users\Vipra\AppData\Local\Programs\Python\Python39\12th project\ncfe_logo.gif'
+LOGO_PATH = '/Users/aakaash/PycharmProjects/project-2022/logo.gif'
+
+
 class Election:
-    def __init__(self,root):
-        self.frame=ttk.Frame(root,height=800,width=1000)
+    def __init__(self, root):
         root.title('NCFE Election')
-        self.frame.grid(column=0,row=0, sticky=(N,S,E,W))
-        root.columnconfigure(0,weight=1)
-        root.rowconfigure(0,weight=1)
 
-        ttk.Label(self.frame,text=f'ELECTIONS').grid(row=2,column=2)
-        yr=date.today().year
-        ttk.Label(self.frame,text=f'{yr}-{yr-1999}').grid(row=3,column=2)
-        ttk.Button(self.frame,text='Setup').grid(row=4, column=1)
-        ttk.Button(self.frame,text='Start').grid(row=4, column=3)
+        mainframe = ttk.Frame(root, padding='3 3 12 12')
+        mainframe.grid(column=0, row=0, sticky="N W E S")
+        root.columnconfigure(0, weight=1)
+        root.rowconfigure(0, weight=1)
 
-        logo=PhotoImage(file=r'C:\Users\Vipra\AppData\Local\Programs\Python\Python39\12th project\ncfe_logo.gif')
-        print(logo)
-        img_label = ttk.Label(self.frame, image=logo).grid(row=1,column=2)
+        self.logo = PhotoImage(file=LOGO_PATH)
+        self.logo1 = self.logo.subsample(4, 4)
 
-root=Tk()
-Election(root)
-root.mainloop()
+        ttk.Label(mainframe, image=self.logo1).grid(row=0, column=2)
+
+        ttk.Label(mainframe, text='ELECTIONS').grid(row=2, column=2)
+        yr = date.today().year
+
+        ttk.Label(mainframe, text=f'{yr}-{yr - 1999}').grid(row=3, column=2)
+
+        ttk.Button(mainframe, text='Setup').grid(row=4, column=1)
+        ttk.Button(mainframe, text='Start').grid(row=4, column=3)
+
+        for child in mainframe.winfo_children():
+            child.grid_configure(padx=5, pady=5)
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-    print("Hello")
-    print("Hi")
-    print('Hey')
-
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    root = Tk()
+    app = Election(root)
+    root.mainloop()
