@@ -1,7 +1,7 @@
 import mysql.connector as ms
 
 # creating database
-con=ms.connect(host='localhost',user='root',passwd='       ')
+con=ms.connect(host='localhost',user='root',passwd='my3qlP@ssword')
 cur=con.cursor()
 cur.execute('create database if not exists Password_manager')
 cur.execute('use Password_manager')
