@@ -14,16 +14,18 @@ def insert_data():
     uname=input('Enter Username:')
     pwd=input('Enter password:')
     cat=input('Enter category:')
-    cur.execute('insert into Details values (uid,uname,pwd,cat)')
+    cur.execute('insert into Details values (%s,%s,%s,%s)',(uid,uname,pwd,cat))
+    con.commit()
 
 # deleting record
 def delete_rec():
     uid=int(input('Enter ID of account whose details are to be deleted:'))
-    cur.execute('delete from Details where ID=uid')
+    cur.execute('delete from Details where ID=%s',(uid,))
+    con.commit()
 
 # displaying all details
 def display_all_rec():
+    cur.execute('select * from Details')
     all_rec=cur.fetchall()
     for rec in all_rec:
         print(rec)
-
