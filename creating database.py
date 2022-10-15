@@ -29,3 +29,7 @@ def display_all_rec():
     all_rec=cur.fetchall()
     for rec in all_rec:
         print(rec)
+
+# displaying specific details
+def specific_details():
+
