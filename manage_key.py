@@ -42,6 +42,7 @@ def make_key_file():
 
 def write_key():
     """ Write the encrypted key to the file"""
+    check_key_file()
     key_path = get_key_path()
     key_file = open(key_path, 'w')
     enc_key = settings['enc_key'].digest_key().hex()

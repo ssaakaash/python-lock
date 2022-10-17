@@ -1,4 +1,4 @@
 # NCFE Class 12 Project 2022
 
-Name of project - undecided
+Lock - A Password Manager
 Synopsis, libraries, etc. - Undecided

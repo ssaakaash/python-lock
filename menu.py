@@ -5,6 +5,7 @@ from settings import settings
 from Encryption import Encryption
 from manage_key import check_key_file, get_key_path
 from utils import clear_screen, logo_small
+import database
 
 
 def get_input(message='', secure=False, lower=False):
@@ -23,7 +24,7 @@ def get_input(message='', secure=False, lower=False):
     return _input
 
 
-def unlock():
+def unlock(try_=1):
     """ Asks for Master Password """
 
     key = get_input(message='Please enter the master password: ', secure=True)
@@ -33,6 +34,15 @@ def unlock():
 
     if check_key(key):
         menu()
+    else:
+        if try_ >= 3:
+            print("Too many incorrect attempts. Access denied.")
+            print()
+            sys.exit()
+        else:
+            print("Master password is incorrect. Please try again.")
+            print()
+            unlock(try_=try_+1)
 
 
 def check_key(key):
@@ -48,19 +58,27 @@ def check_key(key):
     return False
 
 
-def menu():
+def menu(next_act=None):
     """ Displays starting menu """
     while True:
         clear_screen()
         logo_small()
 
-        command = get_input(
-            message='Choose an option [(d)isplay / (a)dd / (q)uit]: ',
-            lower=True,
-        )
-        if command is False:
-            print()
+        if next_act:
+            action = next_act
+            next_act = None
+        else:
+            action = get_input(
+                message='Choose an option [(d)isplay / (a)dd / (q)uit]: ',
+                lower=True,
+            )
+            if action is False:
+                print()
 
-        if command == 'q':
+        if action == 'q':
             sys.exit()
-
+        elif action == 'd':
+            database.to_table(database.get_all_rec())
+            next_act = database.search()
+        elif action == 'a':
+            database.add()
