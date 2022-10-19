@@ -160,6 +160,7 @@ def del_rec():
 
 def search():
     para = input('Search according to (N)ame / (URL) / (U)sername:')
+    clear_screen()
     if para == 'N':
         database2.search_name()
 
@@ -169,3 +170,41 @@ def search():
     elif para == 'U':
         database2.search_username()
 
+
+def update_rec(rec):
+    """ Updates the table usernames in mysql """
+
+    col = menu.get_input(message='Enter 1 or more column to be updated [(N)ame / (U)RL / (Us)ername]:')
+    con, cur = database.make_con(db='Password_manager')
+    if 'N' in col:
+        old_name = menu.get_input('Confirm current name to change')
+        new_name = menu.get_input('Enter new name')
+        if old_name in rec:
+            cur.execute(f'update Usernames set Name = "{new_name}" where Name = "{old_name}";')
+            con.commit()
+            print('Record successfully updated')
+        else:
+            print("Currently entered name doesn't match records. Try again")
+            update_rec(rec)
+
+    if 'U' in col:
+        old_url = menu.get_input('Confirm current url to change')
+        new_url = menu.get_input('Enter new url')
+        if old_url in rec:
+            cur.execute(f'update Usernames set URL = "{new_url}" where URL = "{old_url}";')
+            con.commit()
+            print('Record successfully updated')
+        else:
+            print("Currently entered url doesn't match records. Try again")
+            update_rec(rec)
+
+    if col 'Us' in col:
+        old_uname = menu.get_input('Confirm current username to change')
+        new_uname = menu.get_input('Enter new username')
+        if old_uname in rec:
+            cur.execute(f'update Usernames set Username = "{new_uname}" where Username = "{old_uname}";')
+            con.commit()
+            print('Record successfully updated')
+        else:
+            print("Currently entered username doesn't match records. Try again")
+            update_rec(rec)

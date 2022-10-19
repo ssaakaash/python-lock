@@ -70,8 +70,7 @@ def menu(next_act=None):
             next_act = None
         else:
             action = get_input(
-                message='Choose an option [(dis)play / (a)dd / (del)ete\
-/ (s)earch / (u)pdate / (q)uit]: ',
+                message='Choose an option [(dis)play / (a)dd / (s)earch / (q)uit]: ',
                 lower=True,
             )
             if action is False:
@@ -84,9 +83,6 @@ def menu(next_act=None):
             next_act = database.search()
         elif action == 'a':
             database.add()
-        elif action == 'del':
-            database.del_rec()
         elif action == 's':
             database.search()
-   #     elif action == 'u':
-#            update
+
