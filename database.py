@@ -3,12 +3,14 @@ from tabulate import tabulate
 import menu
 from utils import clear_screen
 import time
+from generate_passwd import generate_random_passwd
+import database2
 
 
 def make_con(db=None):
     """ Make a mySQL connection """
-    PASS = 'my3ql'
-    # PASS = 'my3qlP@ssword'
+    #PASS = 'my3ql'
+    PASS = 'Pr#sql654'
     if db:
         con = ms.connect(host='localhost', user='root', passwd=PASS, database=db)
     else:
@@ -81,7 +83,7 @@ def search():
     """ Searches the database """
     query = menu.get_input(message='Search: ')
 
-    if query in ['d', 'a', 'q']:
+    if query in ['dis', 'a', 'q' , 'del']:
         return query
 
     results = search_id(query)
@@ -96,10 +98,10 @@ def show_item(item):
     print(to_table(item))
 
 
-def add_items(name, url='', password=''):
+def add_items(name, url='', user=''):
     """ Adds a new login item """
     con, cur = make_con(db='Password_manager')
-    q = f"INSERT INTO Usernames (Name, URL, Username) VALUES ('{name}', '{url}', '{password}');"
+    q = f"INSERT INTO Usernames (Name, URL, Username) VALUES ('{name}', '{url}', '{user}');"
     cur.execute(q)
     con.commit()
     close_con(con)
@@ -121,14 +123,49 @@ def add():
     if user is False:
         return False
 
-    password = menu.get_input("Password: ", secure=True)
+    print('Password:')
+    choice=input('(g)enerate password / (e)nter password')
+    
+    if choice=='g':
+        password = generate_random_passwd()
+    else:
+        password = menu.get_input("Password: ", secure=True)
     if password is False:
         return False
 
-    add_items(name, url, password)
+    add_items(name, url, user)
 
     print()
     print('The new items have been added!')
     print()
 
     time.sleep(5)
+
+
+def del_rec():
+    con, cur = make_con(db='Password_manager')
+    cur.execute('select * from Usernames')
+    all_rec = cur.fetchall()
+    nme=input('Enter name')
+    
+    for rec in all_rec:
+        if rec[2] == nme:
+            cur.execute(f'delete from Usernames where Name="{nme}";')
+            print('Record successfully deleted')
+            con.commit()
+            break
+    else:
+        print('No such record found')
+
+
+def search():
+    para = input('Search according to (N)ame / (URL) / (U)sername:')
+    if para == 'N':
+        database2.search_name()
+
+    elif para == 'URL':
+        database2.search_url()
+
+    elif para == 'U':
+        database2.search_username()
+

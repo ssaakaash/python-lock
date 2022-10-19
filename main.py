@@ -9,7 +9,7 @@ def initialize():
     """ Initializes the program """
     logo()
     key_path = get_key_path()
-
+    
     if not os.path.isfile(get_key_path()):
         setup.initialize()
 

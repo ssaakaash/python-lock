@@ -6,6 +6,7 @@ from Encryption import Encryption
 from manage_key import check_key_file, get_key_path
 from utils import clear_screen, logo_small
 import database
+import database2
 
 
 def get_input(message='', secure=False, lower=False):
@@ -69,7 +70,8 @@ def menu(next_act=None):
             next_act = None
         else:
             action = get_input(
-                message='Choose an option [(d)isplay / (a)dd / (q)uit]: ',
+                message='Choose an option [(dis)play / (a)dd / (del)ete\
+/ (s)earch / (u)pdate / (q)uit]: ',
                 lower=True,
             )
             if action is False:
@@ -77,8 +79,14 @@ def menu(next_act=None):
 
         if action == 'q':
             sys.exit()
-        elif action == 'd':
+        elif action == 'dis':
             database.to_table(database.get_all_rec())
             next_act = database.search()
         elif action == 'a':
             database.add()
+        elif action == 'del':
+            database.del_rec()
+        elif action == 's':
+            database.search()
+   #     elif action == 'u':
+#            update
