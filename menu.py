@@ -1,4 +1,6 @@
 import getpass
+
+import category
 from utils import key_symbol
 import sys
 from settings import settings
@@ -72,7 +74,7 @@ def menu(next_act=None):
             next_act = None
         else:
             action = get_input(
-                message='Choose an option [(d)isplay / (s)earch / (a)dd / (q)uit]: ',
+                message='Choose an option [(d)isplay / (s)earch / (a)dd / (c)ategory / (q)uit]: ',
                 lower=True,
             )
             if action is False:
@@ -87,3 +89,5 @@ def menu(next_act=None):
             database.add()
         elif action == 's':
             next_act = database.search()
+        elif action == 'c':
+            category.cat()

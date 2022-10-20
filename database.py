@@ -5,12 +5,13 @@ from utils import clear_screen
 import time
 from generate_passwd import generate_random_passwd
 from settings import settings
+import category
 
 
 def make_con(db=None):
     """ Make a mySQL connection """
-    PASS = 'my3ql'
-    # PASS = 'Pr#sql654'
+    #PASS = 'my3ql'
+    PASS = 'Pr#sql654'
     if db:
         con = ms.connect(host='localhost', user='root', passwd=PASS, database=db)
     else:
@@ -23,10 +24,11 @@ def create_db(cur):
     """ Create the Database """
     cur.execute('CREATE DATABASE IF NOT EXISTS Password_manager;')
     cur.execute('USE Password_manager;')
+    category.create_cat()
     cur.execute('''CREATE TABLE IF NOT EXISTS Usernames (
         Item int primary key auto_increment,
         Number int not null,
-        Category varchar(30),
+        Category varchar(30) references Category(Category) on update cascade,
         Name varchar(30),
         URL varchar(50),
         Username varchar(30)
@@ -49,6 +51,11 @@ def get_all_rec():
 def get_rec_count():
     """ Return the number of records """
     return len(get_all_rec())
+
+
+def rec_count(rec):
+    """Returns number of records according to query"""
+    return len(rec)
 
 
 def close_con(con):
