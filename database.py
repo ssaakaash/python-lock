@@ -152,9 +152,39 @@ def show_item(item):
             pass
         elif action == 'd':
             # Delete the password
-            pass
+            deleted = delete(item)
+            if deleted:
+                return True
         elif action in ['s', 'b', 'q']:
             return action
+
+
+def delete_rec(_id):
+    """ Deletes a record given the id """
+    con, cur = make_con(db='Password_manager')
+    cur.execute(f"DELETE FROM Usernames WHERE Item = {_id};")
+    cur.execute(f"DELETE FROM Passwords WHERE Item = {_id};")
+    con.commit()
+    close_con(con)
+
+
+def delete(item):
+    """ Deletes the entire record """
+    confirm = menu.get_input("Confirm deletion? (y/n): ", lower=True)
+    if confirm is False or confirm != 'y':
+        print()
+        print('Operation Cancelled!')
+        print()
+    else:
+        _id = item[0][0]
+        delete_rec(_id)
+        print()
+        print("Successfully deleted the record.")
+        print()
+
+        time.sleep(2)
+        return True
+    return False
 
 
 def add_items(name, url='', user=''):
@@ -224,19 +254,4 @@ def add():
     print()
 
     time.sleep(2)
-
-# def del_rec():
-#     con, cur = make_con(db='Password_manager')
-#     cur.execute('select * from Usernames')
-#     all_rec = cur.fetchall()
-#     nme=input('Enter name')
-#
-#     for rec in all_rec:
-#         if rec[2] == nme:
-#             cur.execute(f'delete from Usernames where Name="{nme}";')
-#             print('Record successfully deleted')
-#             con.commit()
-#             break
-#     else:
-#         print('No such record found')
 
