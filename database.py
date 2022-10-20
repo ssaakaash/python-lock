@@ -160,7 +160,7 @@ def show_item(item):
             return show_password(item)
         elif action == 'e':
             # Edit the details
-            pass
+            edit_menu(item)
         elif action == 'd':
             # Delete the password
             deleted = delete(item)
@@ -278,41 +278,69 @@ def add():
 
     time.sleep(2)
 
-#
-# def update_rec(rec):
-#     """ Updates the table usernames in mysql """
-#
-#     col = menu.get_input(message='Enter 1 or more column to be updated [(N)ame / (U)RL / (Us)ername]:')
-#     con, cur = database.make_con(db='Password_manager')
-#     if 'N' in col:
-#         old_name = menu.get_input('Confirm current name to change')
-#         new_name = menu.get_input('Enter new name')
-#         if old_name in rec:
-#             cur.execute(f'update Usernames set Name = "{new_name}" where Name = "{old_name}";')
-#             con.commit()
-#             print('Record successfully updated')
-#         else:
-#             print("Currently entered name doesn't match records. Try again")
-#             update_rec(rec)
-#
-#     if 'U' in col:
-#         old_url = menu.get_input('Confirm current url to change')
-#         new_url = menu.get_input('Enter new url')
-#         if old_url in rec:
-#             cur.execute(f'update Usernames set URL = "{new_url}" where URL = "{old_url}";')
-#             con.commit()
-#             print('Record successfully updated')
-#         else:
-#             print("Currently entered url doesn't match records. Try again")
-#             update_rec(rec)
-#
-#     if col 'Us' in col:
-#         old_uname = menu.get_input('Confirm current username to change')
-#         new_uname = menu.get_input('Enter new username')
-#         if old_uname in rec:
-#             cur.execute(f'update Usernames set Username = "{new_uname}" where Username = "{old_uname}";')
-#             con.commit()
-#             print('Record successfully updated')
-#         else:
-#             print("Currently entered username doesn't match records. Try again")
-#             update_rec(rec)
+
+def edit_menu(item):
+    """ Edit an item """
+    print()
+    action = menu.get_input(
+        message='What would you like to edit [(n)ame / u(r)l / (u)sername / (p)assword / (b)ack]: ',
+        lower=True
+    )
+
+    if action == 'n':
+        update('name', item)
+    elif action == 'r':
+        update('url', item)
+    elif action == 'u':
+        update('username', item)
+    elif action == 'p':
+        update('password', item)
+    elif action == 'b':
+        return
+
+    return
+
+
+def update_rec(id_, field, value, table='Usernames'):
+    """ Updates the record in the db """
+    con, cur = make_con(db='Password_manager')
+    cur.execute(f'UPDATE {table} SET {field} = "{value}" WHERE Item = {id_};')
+    con.commit()
+    close_con(con)
+
+
+def update(field, rec):
+    """ Updates the table usernames in mysql """
+    ref = {'name': 3, 'url': 4, 'username': 5}
+    id_ = rec[0][0]
+
+    if field != 'password':
+        ref_no = ref[field]
+        print(f"Current {field}: {rec[0][ref_no] if rec[0][ref_no] != '' else 'Empty!'}")
+        new_val = menu.get_input(f'New {field}: ')
+
+        if new_val is not False:
+            update_rec(id_, field, new_val)
+        else:
+            print()
+            print("Cancelled!")
+            return False
+    else:
+        print('Password suggestion:', generate_random_passwd())
+        password = menu.get_input("Password: ", secure=True)
+        if password is not False:
+            password = settings['enc_key'].encrypt(password.encode())
+            update_rec(id_, field, password, table='Passwords')
+        else:
+            print()
+            print("Cancelled!")
+            return False
+
+    print(f"The {field} has been updated.")
+    print()
+    time.sleep(2)
+
+    return True
+
+
+
