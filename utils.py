@@ -1,3 +1,5 @@
+import platform
+
 
 def logo():
     """ Prints the Logo """
@@ -32,6 +34,8 @@ def logo_small():
 
 def key_symbol():
     """ Adds key icon"""
+    if platform.system() == 'Windows':
+        return ''
     return u'\U0001F511  '
 
 

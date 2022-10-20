@@ -25,6 +25,7 @@ def create_db(cur):
     cur.execute('USE Password_manager;')
     cur.execute('''CREATE TABLE IF NOT EXISTS Usernames (
         Item int primary key auto_increment,
+        Number int not null,
         Category varchar(30),
         Name varchar(30),
         URL varchar(50),
@@ -57,6 +58,7 @@ def close_con(con):
 
 def to_table(rows=[]):
     """ Print the rows as table """
+    rows = remove_id_from_recs(rows)
     if len(rows) > 0:
         print()
         print(tabulate(rows, ['Item', 'Category', 'Name', 'URL', 'Username']))
@@ -85,7 +87,7 @@ def search_general(query):
 def search_id(query):
     """ Search database by id if query is int """
     if query.isdigit():
-        rec = query_db(f'item = {query}')
+        rec = query_db(f'Number = {query}')
         if rec:
             return rec
     return search_general(query)
@@ -104,6 +106,15 @@ def search_results(recs):
                 return show_item(rec)
         except:
             return False
+
+
+def remove_id_from_recs(recs):
+    """ Returns the recs with Item field removed """
+    new_recs = []
+    for rec in recs:
+        rec = rec[1:]
+        new_recs.append(rec)
+    return new_recs
 
 
 def search():
@@ -159,6 +170,16 @@ def show_item(item):
             return action
 
 
+def update_order(item):
+    """ Updates the order number for all records above given id """
+    item = remove_id_from_recs(item)
+    _id = item[0][0]
+    con, cur = make_con(db='Password_manager')
+    cur.execute(f"UPDATE Usernames SET Number = Number - 1 WHERE Number > {_id}")
+    con.commit()
+    close_con(con)
+
+
 def delete_rec(_id):
     """ Deletes a record given the id """
     con, cur = make_con(db='Password_manager')
@@ -178,6 +199,7 @@ def delete(item):
     else:
         _id = item[0][0]
         delete_rec(_id)
+        update_order(item)
         print()
         print("Successfully deleted the record.")
         print()
@@ -190,7 +212,8 @@ def delete(item):
 def add_items(name, url='', user=''):
     """ Adds a new login item to the db """
     con, cur = make_con(db='Password_manager')
-    cur.execute(f"INSERT INTO Usernames (Name, URL, Username) VALUES ('{name}', '{url}', '{user}');")
+    number = get_rec_count() + 1
+    cur.execute(f"INSERT INTO Usernames (Name, URL, Username, Number) VALUES ('{name}', '{url}', '{user}', {number});")
     con.commit()
     close_con(con)
 
