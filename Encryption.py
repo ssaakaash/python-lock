@@ -20,7 +20,6 @@ class Encryption:
 
     def encrypt(self, secret):
         """ Encrypt a secret """
-
         IV = CryptoRandom.new().read(AES.block_size)
         aes = self.get_aes(IV)
         padding = AES.block_size - len(secret) % AES.block_size
@@ -32,7 +31,6 @@ class Encryption:
 
     def decrypt(self, enc_secret):
         """ Decrypt a secret """
-
         enc_secret = base64.b64decode(enc_secret)
         IV = enc_secret[:AES.block_size]
         aes = self.get_aes(IV)

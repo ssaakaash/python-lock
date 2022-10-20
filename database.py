@@ -4,13 +4,13 @@ import menu
 from utils import clear_screen
 import time
 from generate_passwd import generate_random_passwd
-import database2
+from settings import settings
 
 
 def make_con(db=None):
     """ Make a mySQL connection """
-    #PASS = 'my3ql'
-    PASS = 'Pr#sql654'
+    PASS = 'my3ql'
+    # PASS = 'Pr#sql654'
     if db:
         con = ms.connect(host='localhost', user='root', passwd=PASS, database=db)
     else:
@@ -45,6 +45,11 @@ def get_all_rec():
     return all_rec
 
 
+def get_rec_count():
+    """ Return the number of records """
+    return len(get_all_rec())
+
+
 def close_con(con):
     """ Close the mySQL connection """
     con.close()
@@ -55,56 +60,139 @@ def to_table(rows=[]):
     if len(rows) > 0:
         print()
         print(tabulate(rows, ['Item', 'Category', 'Name', 'URL', 'Username']))
-        print()
     else:
         print()
         print('No login items added yet. Add some!')
         print()
 
 
-def query_db(query):
-    """ Query the database """
+def query_db(query, table='Usernames'):
+    """ Query a specific table in the database """
     con, cur = make_con(db='Password_manager')
-    cur.execute(f'select * from Passwords where {query};')
+    cur.execute(f'select * from {table} where {query};')
     rec = cur.fetchall()
     close_con(con)
     return rec
 
 
+def search_general(query):
+    """ Search by keyword (Name, URL, Username) """
+    query = '%' + query + '%'
+    recs = query_db(f'Name LIKE "{query}" OR URL LIKE "{query}" OR Username LIKE "{query}"')
+    return recs
+
+
 def search_id(query):
     """ Search database by id if query is int """
     if query.isdigit():
-        rec = query_db(f'id = {query}')
+        rec = query_db(f'item = {query}')
         if rec:
-            return [rec]
+            return rec
+    return search_general(query)
+
+
+def search_results(recs):
+    """ Displays the search results """
+    to_table(recs)
+    print()
+
+    rec_id = menu.get_input('Select an Item # or type any key to go back: ')
+    if rec_id:
+        try:
+            rec = [row for row in recs if row[0] == int(rec_id)]
+            if rec:
+                return show_item(rec)
+        except:
+            return False
 
 
 def search():
     """ Searches the database """
+    print()
     query = menu.get_input(message='Search: ')
 
-    if query in ['dis', 'a', 'q' , 'del']:
+    if query in ['d', 'a', 'q', 's']:
         return query
 
     results = search_id(query)
 
     if len(results) == 1:
         show_item(results)
+    elif len(results) > 1:
+        return search_results(results)
+    else:
+        try:
+            print('No results!')
+            time.sleep(2)
+        except:
+            pass
+
+        return False
 
 
 def show_item(item):
     """ Shows one password item """
     clear_screen()
-    print(to_table(item))
+    to_table(item)
+    print()
+
+    while True:
+        action = menu.get_input(
+            message='Choose an option [sh(o)w password / (e)dit / (d)elete / (b)ack]: ',
+            lower=True
+        )
+        if action is False:
+            print()
+
+        if action == 'o':
+            # Show the password
+            return show_password(item)
+        elif action == 'e':
+            # Edit the details
+            pass
+        elif action == 'd':
+            # Delete the password
+            pass
+        elif action in ['s', 'b', 'q']:
+            return action
 
 
 def add_items(name, url='', user=''):
-    """ Adds a new login item """
+    """ Adds a new login item to the db """
     con, cur = make_con(db='Password_manager')
-    q = f"INSERT INTO Usernames (Name, URL, Username) VALUES ('{name}', '{url}', '{user}');"
-    cur.execute(q)
+    cur.execute(f"INSERT INTO Usernames (Name, URL, Username) VALUES ('{name}', '{url}', '{user}');")
     con.commit()
     close_con(con)
+
+
+def add_pass(password=''):
+    """ Adds the encrypted password to the db """
+    password = settings['enc_key'].encrypt(password.encode())
+    con, cur = make_con(db='Password_manager')
+    cur.execute(f'INSERT INTO Passwords (Password) VALUES ("{password}");')
+    con.commit()
+    close_con(con)
+
+
+def get_password(_id):
+    """ Returns the password associated with the id """
+    rec = query_db(f'Item = {_id}', 'Passwords')
+    cipher = rec[0][1][2:-1]
+    password = settings['enc_key'].decrypt(cipher.encode())
+    return str(password)[2:-1]
+
+
+def show_password(item):
+    """ Shows the password for 5 seconds """
+    _id = item[0][0]
+    try:
+        print('The password will be hidden after 5 seconds.')
+        print('The password is:', get_password(_id))
+        time.sleep(5)
+    except KeyboardInterrupt:
+        pass
+
+    return show_item(item)
 
 
 def add():
@@ -123,49 +211,32 @@ def add():
     if user is False:
         return False
 
-    print('Password:')
-    choice=input('(g)enerate password / (e)nter password')
-    
-    if choice=='g':
-        password = generate_random_passwd()
-    else:
-        password = menu.get_input("Password: ", secure=True)
+    print('Password suggestion:', generate_random_passwd())
+    password = menu.get_input("Password: ", secure=True)
     if password is False:
         return False
 
     add_items(name, url, user)
+    add_pass(password)
 
     print()
     print('The new items have been added!')
     print()
 
-    time.sleep(5)
+    time.sleep(2)
 
-
-def del_rec():
-    con, cur = make_con(db='Password_manager')
-    cur.execute('select * from Usernames')
-    all_rec = cur.fetchall()
-    nme=input('Enter name')
-    
-    for rec in all_rec:
-        if rec[2] == nme:
-            cur.execute(f'delete from Usernames where Name="{nme}";')
-            print('Record successfully deleted')
-            con.commit()
-            break
-    else:
-        print('No such record found')
-
-
-def search():
-    para = input('Search according to (N)ame / (URL) / (U)sername:')
-    if para == 'N':
-        database2.search_name()
-
-    elif para == 'URL':
-        database2.search_url()
-
-    elif para == 'U':
-        database2.search_username()
+# def del_rec():
+#     con, cur = make_con(db='Password_manager')
+#     cur.execute('select * from Usernames')
+#     all_rec = cur.fetchall()
+#     nme=input('Enter name')
+#
+#     for rec in all_rec:
+#         if rec[2] == nme:
+#             cur.execute(f'delete from Usernames where Name="{nme}";')
+#             print('Record successfully deleted')
+#             con.commit()
+#             break
+#     else:
+#         print('No such record found')
 
