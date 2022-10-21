@@ -1,8 +1,8 @@
-from menu import get_input
-from settings import settings
-from Encryption import Encryption
-import database
-from manage_key import write_key
+from .menu import get_input
+from .settings import settings
+from support.tools.Encryption import Encryption
+from .backend import database
+from .manage_key import write_key
 
 
 def initialize():

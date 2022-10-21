@@ -1,13 +1,11 @@
 import getpass
-
-import category
-from utils import key_symbol
+from support.tools.utils import key_symbol
 import sys
-from settings import settings
-from Encryption import Encryption
-from manage_key import check_key_file, get_key_path
-from utils import clear_screen, logo_small
-import database
+from .settings import settings
+from support.tools.Encryption import Encryption
+from .manage_key import check_key_file, get_key_path
+from support.tools.utils import clear_screen, logo_small
+from .backend import database, add, search
 
 
 def get_input(message='', secure=False, lower=False):
@@ -74,7 +72,7 @@ def menu(next_act=None):
             next_act = None
         else:
             action = get_input(
-                message='Choose an option [(d)isplay / (s)earch / (a)dd / (c)ategory / (q)uit]: ',
+                message='Choose an option [(d)isplay / (s)earch / (a)dd / (q)uit]: ',
                 lower=True,
             )
             if action is False:
@@ -84,10 +82,8 @@ def menu(next_act=None):
             sys.exit()
         elif action == 'd':
             database.to_table(database.get_all_rec())
-            next_act = database.search()
+            next_act = search.search()
         elif action == 'a':
-            database.add()
+            add.add()
         elif action == 's':
-            next_act = database.search()
-        elif action == 'c':
-            category.cat()
+            next_act = search.search()
