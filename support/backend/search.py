@@ -3,7 +3,7 @@ from .database import query_db, to_table
 from ..settings import settings
 from ..tools.utils import clear_screen
 from . import edit, delete
-from ..tools import Copy
+from ..tools import copy
 import time
 
 
@@ -23,11 +23,11 @@ def show_item(item):
             print()
 
         if action == 'u':
-            Copy.copy(item[0][5], 'username')
-            Copy.wait()
+            copy.copy(item[0][5], 'username')
+            copy.wait()
         elif action == 'p':
-            Copy.copy(get_password(item[0][0]), 'password')
-            Copy.wait()
+            copy.copy(get_password(item[0][0]), 'password')
+            copy.wait()
         elif action == 'o':
             # Show the password
             return show_password(item)
@@ -78,6 +78,9 @@ def search():
     """ Searches the database """
     print()
     query = menu.get_input(message='Search: ')
+
+    if query is False:
+        return False
 
     if query in ['d', 'a', 'q', 's']:
         return query

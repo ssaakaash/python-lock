@@ -4,8 +4,8 @@ from tabulate import tabulate
 
 def make_con(db=None):
     """ Make a mySQL connection """
-    #PASS = 'my3ql'
-    PASS = 'Pr#sql654'
+    PASS = 'my3ql'
+    # PASS = 'Pr#sql654'
     if db:
         con = ms.connect(host='localhost', user='root', passwd=PASS, database=db)
     else:
@@ -29,6 +29,11 @@ def create_db(cur):
     cur.execute('''CREATE TABLE IF NOT EXISTS Passwords (
         Item int primary key auto_increment,
         Password varchar(1000)
+    );''')
+    cur.execute('''create table if not exists Category ( 
+        Item_No int primary key auto_increment,
+        Number int not null,
+        Category varchar(30)
     );''')
 
 
