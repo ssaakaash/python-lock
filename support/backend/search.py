@@ -3,6 +3,7 @@ from .database import query_db, to_table
 from ..settings import settings
 from ..tools.utils import clear_screen
 from . import edit, delete
+from ..tools import copy
 import time
 
 
@@ -14,13 +15,20 @@ def show_item(item):
 
     while True:
         action = menu.get_input(
-            message='Choose an option [sh(o)w password / (e)dit / (d)elete / (b)ack]: ',
+            message='Choose an option [copy (u)sername, (p)assword / sh(o)w password / '
+                    '(e)dit / (d)elete / (s)earch / (b)ack]: ',
             lower=True
         )
         if action is False:
             print()
 
-        if action == 'o':
+        if action == 'u':
+            copy.copy(item[0][5], 'username')
+            copy.wait()
+        elif action == 'p':
+            copy.copy(get_password(item[0][0]), 'password')
+            copy.wait()
+        elif action == 'o':
             # Show the password
             return show_password(item)
         elif action == 'e':
