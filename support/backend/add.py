@@ -4,13 +4,14 @@ from support.tools.utils import clear_screen
 from .. import menu
 from support.tools.generate_passwd import generate_random_passwd
 import time
+from category import check_cat
 
 
-def add_items(name, url='', user=''):
+def add_items(name, cat_='', url='', user=''):
     """ Adds a new login item to the db """
     con, cur = make_con(db='Password_manager')
     number = get_rec_count() + 1
-    cur.execute(f"INSERT INTO Usernames (Name, URL, Username, Number) VALUES ('{name}', '{url}', '{user}', {number});")
+    cur.execute(f"INSERT INTO Usernames (Name, Category, URL, Username, Number) VALUES ('{name}', '{cat_}', '{url}', '{user}', {number});")
     con.commit()
     close_con(con)
 
@@ -39,6 +40,16 @@ def add():
     user = menu.get_input("Username: ")
     if user is False:
         return False
+
+    cat_ = menu.get_input('Category: ')
+    if cat_ is False:
+        return False
+    con, cur = make_con(db='Password_manager')
+    rec_list = check_cat()
+    if cat_.lower() not in rec_list:
+        cur.execute(f'insert into Category (Category) values ("{cat_}")')
+    con.commit()
+    close_con(con)
 
     print('Password suggestion:', generate_random_passwd())
     password = menu.get_input("Password: ", secure=True)

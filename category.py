@@ -1,7 +1,5 @@
 import mysql.connector as ms
-from support.backend.database import make_con
-from support.backend.database import close_con
-from support.backend.database import query_db
+from support.backend.database import make_con, close_con, query_db
 from support.tools.utils import clear_screen
 from support import menu
 from tabulate import tabulate
@@ -86,12 +84,7 @@ def cat():
             cat_to_del = menu.get_input(message='Enter category name to delete:',lower=True)
             cur.execute(f'select * from Category natural join Usernames where Usernames.Category="{cat_to_del}";')
             rec = cur.fetchall()
-            query = 'Item_no is not null'
-
-            rec_list = []
-            rec_ = query_db(query,table='Category')
-            for rec1 in rec_:
-                rec_list.append(rec1[1].lower())
+            rec_list=check_cat()
 
             if rec:
                 print('Sorry, can\'t delete this category.. records still exist')
@@ -106,3 +99,12 @@ def cat():
 
         elif choice == 'b':
             back()
+
+
+def check_cat():
+    query = 'Item_no is not null'
+    rec_list = []
+    rec_ = query_db(query, table='Category')
+    for rec1 in rec_:
+        rec_list.append(rec1[1].lower())
+    return rec_list
