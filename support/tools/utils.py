@@ -1,4 +1,5 @@
 import platform
+import os
 
 
 def logo():
@@ -41,6 +42,9 @@ def key_symbol():
 
 def clear_screen():
     """ Clears the screen """
+    if platform.system() == 'Windows':
+        os.system('cls')
+        return True
     print('\x1b[1J')
     return True
 
