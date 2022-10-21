@@ -7,6 +7,8 @@ from .manage_key import check_key_file, get_key_path
 from support.tools.utils import clear_screen, logo_small
 from .backend import database, add, search
 import category
+import platform
+import time
 
 def get_input(message='', secure=False, lower=False):
     """ Simply gets user input """
