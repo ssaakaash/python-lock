@@ -36,6 +36,8 @@ def del_cat(cat_to_del):
     """Deletes the selected category from db when category is not there in username table"""
     con, cur = database.make_con(db='Password_manager')
     cur.execute(f'delete from category where Category="{cat_to_del}";')
+    con.commit()
+    database.close_con(con)
 
 
 def back():
@@ -56,7 +58,7 @@ def show_cat():
     con, cur = database.make_con('Password_manager')
     cur.execute('select * from Category;')
     rec = cur.fetchall()
-    print(tabulate(rec, ['Item_no', 'Category-name']))
+    print(tabulate(rec, ['Item_no', 'Category_name']))
     database.close_con(con)
 
 
@@ -78,12 +80,17 @@ def cat():
 
         elif choice == 'd':
             show_cat()
+            con, cur = database.make_con(db='Password_manager')
             cat_to_del = menu.get_input(message='Enter category name to delete:')
-            query = f'select * from Category natural join Usernames where Usernames.Category="{cat_to_del}";'
-            if database.rec_count(database.query_db(query)):
+            cur.execute(f'select * from Category natural join Usernames where Usernames.Category="{cat_to_del}";')
+            rec = cur.fetchall()
+            if rec:
                 print('Sorry, can\'t delete this category.. records still exist')
             else:
                 del_cat(cat_to_del)
+                print()
+                print('Category deleted successfully')
+                print()
 
         elif choice == 'b':
             back()
