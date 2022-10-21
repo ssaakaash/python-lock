@@ -41,3 +41,4 @@ class Encryption:
             raise ValueError("Invalid padding...")
 
         return data[:-padding]
+    
