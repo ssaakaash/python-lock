@@ -1,4 +1,7 @@
 import getpass
+import platform
+import time
+
 from support.tools.utils import key_symbol
 import sys
 from .settings import settings
@@ -79,6 +82,10 @@ def menu(next_act=None):
                 print()
 
         if action == 'q':
+            if platform.system() == 'Windows':
+                print()
+                print("Quitting.")
+                time.sleep(2)
             sys.exit()
         elif action == 'd':
             database.to_table(database.get_all_rec())
