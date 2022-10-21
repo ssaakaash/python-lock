@@ -1,6 +1,6 @@
 import platform
 import os
-from settings import settings
+from .settings import settings
 
 
 def get_dir_path():

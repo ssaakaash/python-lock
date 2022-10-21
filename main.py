@@ -1,8 +1,8 @@
-from utils import logo
-from manage_key import get_key_path
-import setup
+from support.tools.utils import logo
+from support.manage_key import get_key_path
+from support import setup
 import os
-from menu import unlock
+from support.menu import unlock
 
 
 def initialize():
