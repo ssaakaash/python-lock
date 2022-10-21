@@ -1,13 +1,15 @@
 import mysql.connector as ms
-import database
-import utils
-import menu
+from support.backend.database import make_con
+from support.backend.database import close_con
+from support.backend.database import query_db
+from support.tools.utils import clear_screen
+from support import menu
 from tabulate import tabulate
 
 
 def create_cat():
     """Creates the table Category"""
-    con, cur = database.make_con(db='Password_manager')
+    con, cur = make_con(db='Password_manager')
     cur.execute('create table if not exists Category\
         (Item_No int primary key auto_increment,\
         Category varchar(30));')
@@ -16,28 +18,28 @@ def create_cat():
 
 def add_cat():
     """Adds a category record"""
-    con, cur = database.make_con(db='Password_manager')
+    con, cur = make_con(db='Password_manager')
     cat_name = menu.get_input(message='Enter Category name:')
     cur.execute(f'insert into Category (Category) values ("{cat_name}");')
     con.commit()
-    database.close_con(con)
+    close_con(con)
     print('Category has been successfully added')
 
 
 def rename_cat(cat_no, name):
     """"Renames an existing category"""
-    con, cur = database.make_con('Password_manager')
+    con, cur = make_con('Password_manager')
     cur.execute(f'update Category set Category="{name}" where Item_No="{cat_no}"')
     con.commit()
-    database.close_con(con)
+    close_con(con)
 
 
 def del_cat(cat_to_del):
     """Deletes the selected category from db when category is not there in username table"""
-    con, cur = database.make_con(db='Password_manager')
+    con, cur = make_con(db='Password_manager')
     cur.execute(f'delete from category where Category="{cat_to_del}";')
     con.commit()
-    database.close_con(con)
+    close_con(con)
 
 
 def back():
@@ -47,24 +49,24 @@ def back():
 
 def inbuilt_cat():
     """Inserts 3 records in category table"""
-    con, cur = database.make_con('Password_manager')
+    con, cur = make_con('Password_manager')
     cur.execute('insert into Category (Category) values (Personal),(Work),(Gaming);')
     con.commit()
-    database.close_con(con)
+    close_con(con)
 
 
 def show_cat():
     """Displays ll the contet of table Category"""
-    con, cur = database.make_con('Password_manager')
+    con, cur = make_con('Password_manager')
     cur.execute('select * from Category;')
     rec = cur.fetchall()
     print(tabulate(rec, ['Item_no', 'Category_name']))
-    database.close_con(con)
+    close_con(con)
 
 
 def cat():
     """Runs the entire category function"""
-    utils.clear_screen()
+    clear_screen()
     while True:
         choice = menu.get_input(message='Choose an option [(a)dd / (r)ename / (d)elete / (b)ack]:', lower=True)
 
@@ -80,17 +82,27 @@ def cat():
 
         elif choice == 'd':
             show_cat()
-            con, cur = database.make_con(db='Password_manager')
-            cat_to_del = menu.get_input(message='Enter category name to delete:')
+            con, cur = make_con(db='Password_manager')
+            cat_to_del = menu.get_input(message='Enter category name to delete:',lower=True)
             cur.execute(f'select * from Category natural join Usernames where Usernames.Category="{cat_to_del}";')
             rec = cur.fetchall()
+            query = 'Item_no is not null'
+
+            rec_list = []
+            rec_ = query_db(query,table='Category')
+            for rec1 in rec_:
+                rec_list.append(rec1[1].lower())
+
             if rec:
                 print('Sorry, can\'t delete this category.. records still exist')
-            else:
+            elif cat_to_del in rec_list:
                 del_cat(cat_to_del)
                 print()
                 print('Category deleted successfully')
                 print()
+            else:
+                print('Category does not exist.. Going back')
+            close_con(con)
 
         elif choice == 'b':
             back()

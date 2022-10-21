@@ -4,8 +4,8 @@ from tabulate import tabulate
 
 def make_con(db=None):
     """ Make a mySQL connection """
-    PASS = 'my3ql'
-    # PASS = 'Pr#sql654'
+    #PASS = 'my3ql'
+    PASS = 'Pr#sql654'
     if db:
         con = ms.connect(host='localhost', user='root', passwd=PASS, database=db)
     else:
