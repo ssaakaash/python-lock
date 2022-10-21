@@ -7,7 +7,7 @@ import time
 from category import check_cat
 
 
-def add_items(name, cat_='', url='', user=''):
+def add_items(name,  url='', user='', cat_=''):
     """ Adds a new login item to the db """
     con, cur = make_con(db='Password_manager')
     number = get_rec_count() + 1
@@ -56,7 +56,7 @@ def add():
     if password is False:
         return False
 
-    add_items(name, url, user)
+    add_items(name, url, user, cat_)
     add_pass(password)
 
     print()
