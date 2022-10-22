@@ -46,14 +46,16 @@ def show_item(item):
 def search_general(query):
     """ Search by keyword (Name, URL, Username) """
     query = '%' + query + '%'
-    recs = query_db(f'Name LIKE "{query}" OR URL LIKE "{query}" OR Username LIKE "{query}"', show_cat=True)
+    recs = query_db(f'c.Category LIKE "{query}" OR Name LIKE "{query}" OR '
+                    f'URL LIKE "{query}" OR Username LIKE "{query}"',
+                    show_cat=True)
     return recs
 
 
 def search_id(query):
     """ Search database by id if query is int """
     if query.isdigit():
-        rec = query_db(f'Number = {query}', show_cat=True)
+        rec = query_db(f'u.Number = {query}', show_cat=True)
         if rec:
             return rec
     return search_general(query)
