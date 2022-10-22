@@ -40,7 +40,8 @@ def create_db(cur):
 def get_all_rec():
     """ Display all the details """
     con, cur = make_con(db='Password_manager')
-    cur.execute('select * from Usernames')
+    cur.execute('SELECT u.Item, u.Number, c.Category, u.Name, u.URL, u.Username FROM '
+                'Usernames u LEFT JOIN Category c ON u.Category = c.Item_no;')
     all_rec = cur.fetchall()
     close_con(con)
     return all_rec

@@ -105,6 +105,9 @@ def select(message='Select a category: ', optional=False):
 
     id_ = menu.get_input(message)
 
+    if id_ is False:
+        return False
+
     try:
         id_int = int(id_)
         if id_int and exists(id_int):
@@ -159,12 +162,14 @@ def delete():
     if is_used(id_):
         print()
         print('Sorry, can\'t delete this category.. records still exist')
+        time.sleep(2)
         return False
 
     confirm = menu.get_input("Confirm deletion (y/n): ")
     if confirm is False or confirm != 'y':
         print()
         print("Operation Cancelled!")
+        time.sleep(2)
         return False
 
     del_cat(id_)
