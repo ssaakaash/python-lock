@@ -84,7 +84,13 @@ def exists(id_):
     return False
 
 
-def select(message='Select a category: ', optional=False):
+def get_cat_key(id_):
+    """ Returns the primary key associated with the id """
+    rec = query_db(f"Number = {id_}", table='Category')
+    return rec[0][0]
+
+
+def select(message='Select a category: ', optional=False, get_key=False):
     """ Asks user to choose a category """
     all_cats = get_all_cat()
 
@@ -103,6 +109,8 @@ def select(message='Select a category: ', optional=False):
     try:
         id_int = int(id_)
         if id_int and exists(id_int):
+            if get_key:
+                return get_cat_key(id_int)
             return id_int
     except ValueError:
         pass
@@ -111,7 +119,7 @@ def select(message='Select a category: ', optional=False):
         return None
 
     print()
-    print("Invalid Category!")
+    print("Invalid Category number!")
     time.sleep(2)
 
     return False

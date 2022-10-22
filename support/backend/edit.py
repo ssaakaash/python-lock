@@ -3,13 +3,14 @@ from .. import menu
 from ..settings import settings
 from support.tools.generate_passwd import generate_random_passwd
 import time
+from category import select
 
 
 def edit_menu(item):
     """ Edit an item """
     print()
     action = menu.get_input(
-        message='What would you like to edit [(n)ame / u(r)l / (u)sername / (p)assword / (b)ack]: ',
+        message='What would you like to edit [(c)ategory / (n)ame / u(r)l / (u)sername / (p)assword / (b)ack]: ',
         lower=True
     )
 
@@ -21,6 +22,8 @@ def edit_menu(item):
         update('username', item)
     elif action == 'p':
         update('password', item)
+    elif action == 'c':
+        update('category', item)
     elif action == 'b':
         return
 
@@ -37,13 +40,17 @@ def update_rec(id_, field, value, table='Usernames'):
 
 def update(field, rec):
     """ Updates the table usernames in mysql """
-    ref = {'name': 3, 'url': 4, 'username': 5}
+    ref = {'category': 2, 'name': 3, 'url': 4, 'username': 5}
     id_ = rec[0][0]
 
     if field != 'password':
         ref_no = ref[field]
-        print(f"Current {field}: {rec[0][ref_no] if rec[0][ref_no] != '' else 'Empty!'}")
-        new_val = menu.get_input(f'New {field}: ')
+        print(f"Current {field}: {rec[0][ref_no] if rec[0][ref_no] != '' and rec[0][ref_no] is not None else 'Empty!'}")
+
+        if field == 'category':
+            new_val = select("New category: ", get_key=True)
+        else:
+            new_val = menu.get_input(f'New {field}: ')
 
         if new_val is not False:
             update_rec(id_, field, new_val)
