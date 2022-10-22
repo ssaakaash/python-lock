@@ -35,6 +35,7 @@ def create_db(cur):
         Number int not null,
         Category varchar(30)
     );''')
+    inbuilt_cat()
 
 
 def get_all_rec():
@@ -69,10 +70,22 @@ def to_table(rows=[]):
         print()
 
 
-def query_db(query, table='Usernames'):
+def inbuilt_cat():
+    """Inserts 3 records in category table"""
+    con, cur = make_con('Password_manager')
+    cur.execute('INSERT INTO Category (Category) values ("Personal"), ("Work"), ("Gaming");')
+    con.commit()
+    close_con(con)
+
+
+def query_db(query, table='Usernames', show_cat=False):
     """ Query a specific table in the database """
     con, cur = make_con(db='Password_manager')
-    cur.execute(f'select * from {table} where {query};')
+    if show_cat and table == 'Usernames':
+        cur.execute(f'SELECT u.Item, u.Number, c.Category, u.Name, u.URL, u.Username FROM '
+                    f'Usernames u LEFT JOIN Category c ON u.Category = c.Item_no WHERE {query};')
+    else:
+        cur.execute(f'select * from {table} where {query};')
     rec = cur.fetchall()
     close_con(con)
     return rec

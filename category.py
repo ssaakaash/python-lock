@@ -53,14 +53,6 @@ def del_cat(cat_to_del):
     close_con(con)
 
 
-def inbuilt_cat():
-    """Inserts 3 records in category table"""
-    con, cur = make_con('Password_manager')
-    cur.execute('insert into Category (Category) values ("Personal"), ("Work"), ("Gaming");')
-    con.commit()
-    close_con(con)
-
-
 def to_table(rows=[]):
     rows = remove_id_from_recs(rows)
     """ Print the rows as table """
