@@ -1,11 +1,12 @@
 import mysql.connector as ms
 from tabulate import tabulate
 
+PASS = 'my3ql'
+# PASS = 'Pr#sql654'
+
 
 def make_con(db=None):
     """ Make a mySQL connection """
-    PASS = 'my3ql'
-    # PASS = 'Pr#sql654'
     if db:
         con = ms.connect(host='localhost', user='root', passwd=PASS, database=db)
     else:
@@ -36,6 +37,14 @@ def create_db(cur):
         Category varchar(30)
     );''')
     inbuilt_cat()
+
+
+def remove_db():
+    """ Deletes the database """
+    con, cur = make_con()
+    cur.execute("DROP DATABASE Password_manager;")
+    con.commit()
+    close_con(con)
 
 
 def get_all_rec():
@@ -73,7 +82,10 @@ def to_table(rows=[]):
 def inbuilt_cat():
     """Inserts 3 records in category table"""
     con, cur = make_con('Password_manager')
-    cur.execute('INSERT INTO Category (Category) values ("Personal"), ("Work"), ("Gaming");')
+    cur.execute('INSERT INTO Category (Number, Category) VALUES '
+                '(1, "Personal"), '
+                '(2, "Work"), '
+                '(3, "Gaming");')
     con.commit()
     close_con(con)
 
