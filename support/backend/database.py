@@ -42,7 +42,7 @@ def create_db(cur):
 def remove_db():
     """ Deletes the database """
     con, cur = make_con()
-    cur.execute("DROP DATABASE Password_manager;")
+    cur.execute("DROP DATABASE IF EXISTS Password_manager;")
     con.commit()
     close_con(con)
 
@@ -95,9 +95,9 @@ def query_db(query, table='Usernames', show_cat=False):
     con, cur = make_con(db='Password_manager')
     if show_cat and table == 'Usernames':
         cur.execute(f'SELECT u.Item, u.Number, c.Category, u.Name, u.URL, u.Username FROM '
-                    f'Usernames u LEFT JOIN Category c ON u.Category = c.Item_no WHERE {query};')
+                    f'Usernames u LEFT JOIN Category c ON u.Category = c.Item_no WHERE %s;', (query, ))
     else:
-        cur.execute(f'select * from {table} where {query};')
+        cur.execute(f'select * from %s where %s;', (table, query))
     rec = cur.fetchall()
     close_con(con)
     return rec

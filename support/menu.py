@@ -25,7 +25,13 @@ def get_input(message='', secure=False, lower=False):
     except:
         return False
 
-    return _input
+    table = str.maketrans({
+        "'": r"\'",
+        '"': r'\"',
+        "\\": r"\\"
+    })
+
+    return _input.translate(table)
 
 
 def unlock(try_=1):
@@ -46,7 +52,7 @@ def unlock(try_=1):
         else:
             print("Master password is incorrect. Please try again.")
             print()
-            unlock(try_=try_+1)
+            unlock(try_=try_ + 1)
 
 
 def check_key(key):
