@@ -4,3 +4,5 @@
 /support/__pycache__/
 /support/backend/__pycache__/
 /support/tools/__pycache__/
+*.pyc
+*.DS_Store
