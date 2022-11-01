@@ -95,9 +95,9 @@ def query_db(query, table='Usernames', show_cat=False):
     con, cur = make_con(db='Password_manager')
     if show_cat and table == 'Usernames':
         cur.execute(f'SELECT u.Item, u.Number, c.Category, u.Name, u.URL, u.Username FROM '
-                    f'Usernames u LEFT JOIN Category c ON u.Category = c.Item_no WHERE %s;', (query, ))
+                    f'Usernames u LEFT JOIN Category c ON u.Category = c.Item_no WHERE {query};')
     else:
-        cur.execute(f'select * from %s where %s;', (table, query))
+        cur.execute(f'select * from {table} where {query};')
     rec = cur.fetchall()
     close_con(con)
     return rec
