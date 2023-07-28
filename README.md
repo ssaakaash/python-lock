@@ -1,6 +1,6 @@
 # Lock - A Password Manager
 
-NCFE Class 12 2022 Project
+Originally my NCFE Class 12 2022 Project
 
 Synopsis:
 
